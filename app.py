@@ -3,17 +3,18 @@ import cx_Oracle
 import time
 import datetime
 
+os.system("cls")
+
 #caminho de diretorio local
-cx_Oracle.init_oracle_client(lib_dir=r"C:\app\client\product\12.2.0\client_1\bin")
+# cx_Oracle.init_oracle_client(lib_dir=r"C:\app\client\product\12.2.0\client_1\bin")
 
 # Configuração do banco de dados Oracle
-dsn = cx_Oracle.makedsn("ip", "porta", service_name="service_name")
+dsn = cx_Oracle.makedsn("ip", "port", service_name="service_name")
 user = "user"
-password = "senha"
+password = "password"
 
-# Configuração de caminhos das pastas
-caminhoDestino = str("C:\\Users\\joao.santiago\\Desktop\\python\\Integracao_img_1203\\destino\\")
-caminhoOrigem = str("C:\\Users\\joao.santiago\\Desktop\\python\\Integracao_img_1203\\origem\\")
+# Configuração de caminho da pasta
+caminho = str("C:\\ION Sistemas\\CLIENTES\\")
 
 #funcao de tempo
 def sysdate():
@@ -34,10 +35,10 @@ while 1:
         tempo = sysdate().split()
         
         # Valida se o tempo está de acordo com os valores abaixo, se estiver inicia os processos
-        if tempo[4] == '00' and tempo[5] <= '01':
+        if tempo[4] == '57' and tempo[5] <= '01':
             
             # Verifica o nome das pastas na Ion e salva em variável para validação
-            clientes = [pasta for pasta in os.listdir(caminhoOrigem) if os.path.isdir(os.path.join(caminhoOrigem, pasta))]
+            clientes = [pasta for pasta in os.listdir(caminho) if os.path.isdir(os.path.join(caminho, pasta))]
 
             conn = cx_Oracle.connect(user=user, password=password, dsn=dsn)
             cursor = conn.cursor()
@@ -51,16 +52,19 @@ while 1:
                     cgcent = str(valor[0][1])
 
                     # Renomeia e altera a pasta
-                    os.renames(caminhoOrigem+cgcent, caminhoDestino+'00'+codcli)
+                    os.renames(caminho+cgcent, caminho+'00'+codcli)
 
                     # Salva no log
-                    arquivo = open(caminhoOrigem+'log.txt',"a")
+                    arquivo = open(caminho+'log.txt',"a")
                     arquivo.write(f'Importado cgcent: {cliente}, codcli: {codcli} - {datahora()}\n')
                     arquivo.close()
 
                     print(f'Ok: {cliente} - {codcli}')
                 except:
                     print(f'Cliente não cadastrado ou não existe: {cliente}')
+                
+            print('------------------------------------------------------------------')
+
                     
 
             cursor.close()
